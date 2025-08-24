@@ -1,13 +1,12 @@
--- Auto Hop Script (every 5 minutes, finds another server instead of same one)
+-- Auto Rejoin Script (every 5 minutes with countdown display, fixed position)
+-- Runs automatically, no buttons, fixed at bottom-right
 
-local rejoinInterval = 100 -- 5 minutes (in seconds)
+local rejoinInterval = 120 -- 5 minutes (in seconds)
 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
-local HttpService = game:GetService("HttpService")
 
 local player = Players.LocalPlayer
-local PlaceId = game.PlaceId
 
 -- GUI Setup (fixed position)
 local screenGui = Instance.new("ScreenGui")
@@ -42,42 +41,19 @@ local function formatTime(totalSeconds)
     return string.format("%02d:%02d:%02d", hours, minutes, seconds)
 end
 
--- Find another public server
-local function findAnotherServer()
-    local success, result = pcall(function()
-        return game:HttpGet("https://games.roblox.com/v1/games/" .. PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")
-    end)
-
-    if success then
-        local decoded = HttpService:JSONDecode(result)
-        for _, server in ipairs(decoded.data) do
-            if server.playing < server.maxPlayers and server.id ~= game.JobId then
-                return server.id
-            end
-        end
-    end
-    return nil
-end
-
--- Auto hop loop
-local function autoHopLoop()
+-- Auto rejoin loop
+local function autoRejoinLoop()
     while true do
         local timeLeft = rejoinInterval
         while timeLeft > 0 do
-            timerLabel.Text = "Hopping in: " .. formatTime(timeLeft)
+            timerLabel.Text = "Rejoining in: " .. formatTime(timeLeft)
             task.wait(1)
             timeLeft = timeLeft - 1
         end
-        timerLabel.Text = "Finding new server..."
-
-        local serverId = findAnotherServer()
-        if serverId then
-            TeleportService:TeleportToPlaceInstance(PlaceId, serverId, player)
-        else
-            -- fallback to normal rejoin
-            TeleportService:Teleport(PlaceId, player)
-        end
+        timerLabel.Text = "Rejoining..."
+        TeleportService:Teleport(game.PlaceId, player)
+        -- After teleport, script restarts automatically in new session
     end
 end
 
-task.spawn(autoHopLoop)
+task.spawn(autoRejoinLoop)
