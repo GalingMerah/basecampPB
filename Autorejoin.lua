@@ -1,6 +1,6 @@
 -- Auto Hop Script (every 5 minutes, finds another server instead of same one)
 
-local rejoinInterval = 300 -- 5 minutes (in seconds)
+local rejoinInterval = 100 -- 5 minutes (in seconds)
 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
