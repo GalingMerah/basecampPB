@@ -1,7 +1,7 @@
 -- Auto Rejoin Script (every 5 minutes with countdown display, fixed position)
 -- Runs automatically, no buttons, fixed at bottom-right
 
-local rejoinInterval = 120 -- 5 minutes (in seconds)
+local rejoinInterval = 45 -- 0,x minutes (in seconds)
 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
