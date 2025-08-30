@@ -1,11 +1,9 @@
--- Auto Rejoin Script (every 5 minutes with countdown display, fixed position)
--- Runs automatically, no buttons, fixed at bottom-right
+-- Auto Rejoin Script (every 1 minute with countdown display, fixed position)
 
-local rejoinInterval = 60 -- 0,5 minutes (in seconds)
+local rejoinInterval = 60 -- detik
 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
-
 local player = Players.LocalPlayer
 
 -- GUI Setup (fixed position)
@@ -50,9 +48,18 @@ local function autoRejoinLoop()
             task.wait(1)
             timeLeft = timeLeft - 1
         end
+
         timerLabel.Text = "Rejoining..."
-        TeleportService:Teleport(game.PlaceId, player)
-        -- After teleport, script restarts automatically in new session
+
+        local success, err = pcall(function()
+            TeleportService:Teleport(game.PlaceId, player)
+        end)
+
+        if not success then
+            warn("Teleport failed:", err)
+            -- force keluar, biasanya exploit auto rejoin server
+            player:Kick("Rejoining...")
+        end
     end
 end
 
